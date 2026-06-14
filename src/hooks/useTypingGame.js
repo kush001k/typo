@@ -1,14 +1,14 @@
-import { useState, useCallback, useMemo, useRef } from "react";
-import { quotes, streakThreshold } from "../data/quotes";
+import { useState, useCallback, useMemo, useRef, useEffect } from "react";
+import { quotes } from "../data/quotes";
 import {
   calculateWpm,
   calculateAccuracy,
-  isGoodPerformance,
-  getRandomQuote,
 } from "../utils/scoring";
+import { generateWordSequence } from "../utils/sequencing";
 import { useTimer } from "./useTimer";
 
-const DIFFICULTIES = ["easy", "medium", "hard"];
+const WORD_COUNT = 150;
+const TIMEOUT_MS = 60_000;
 
 export function useTypingGame() {
   const [difficulty, setDifficulty] = useState("medium");
@@ -20,47 +20,58 @@ export function useTypingGame() {
   const [hasError, setHasError] = useState(false);
   const [wpm, setWpm] = useState(0);
   const [accuracy, setAccuracy] = useState(100);
-  const [streak, setStreak] = useState(0);
   const [lastResult, setLastResult] = useState(null);
 
   const timer = useTimer();
   const words = useMemo(() => currentQuote.split(" "), [currentQuote]);
+  const wordIndexRef = useRef(0);
 
   const totalTypedRef = useRef(0);
   const correctCharsRef = useRef(0);
+  const statusRef = useRef(status);
+
+  // Keep statusRef in sync
+  useEffect(() => {
+    statusRef.current = status;
+  }, [status]);
 
   const progress = useMemo(
     () => (words.length ? (wordIndex / words.length) * 100 : 0),
     [wordIndex, words.length]
   );
 
-  const adjustDifficulty = useCallback((good) => {
-    setStreak((prev) => {
-      const next = good ? prev + 1 : prev - 1;
-      if (next >= streakThreshold.up) {
-        setDifficulty((d) => {
-          const idx = DIFFICULTIES.indexOf(d);
-          return idx < DIFFICULTIES.length - 1 ? DIFFICULTIES[idx + 1] : d;
-        });
-        return 0;
-      }
-      if (next <= -streakThreshold.down) {
-        setDifficulty((d) => {
-          const idx = DIFFICULTIES.indexOf(d);
-          return idx > 0 ? DIFFICULTIES[idx - 1] : d;
-        });
-        return 0;
-      }
-      return next;
-    });
-  }, []);
+  const finishGame = useCallback(
+    (reason) => {
+      if (statusRef.current !== "playing") return;
+      const elapsed = timer.stop();
+      const finalWpm = calculateWpm(correctCharsRef.current, elapsed);
+      const finalAcc = calculateAccuracy(
+        correctCharsRef.current,
+        totalTypedRef.current
+      );
+      setWpm(finalWpm);
+      setAccuracy(finalAcc);
+      setLastResult({
+        wpm: finalWpm,
+        accuracy: finalAcc,
+        time: elapsed,
+        difficulty,
+        reason,
+        date: Date.now(),
+      });
+      setStatus("finished");
+    },
+    [difficulty, timer]
+  );
 
   const startGame = useCallback(
     (diff) => {
-      if (diff) setDifficulty(diff);
       const d = diff || difficulty;
-      const quote = getRandomQuote(quotes[d], currentQuote);
-      setCurrentQuote(quote);
+      if (diff) setDifficulty(d);
+      const pool = quotes[d];
+      const sequence = generateWordSequence(pool, WORD_COUNT);
+      wordIndexRef.current = 0;
+      setCurrentQuote(sequence);
       setWordIndex(0);
       setTypedWords([]);
       setInputValue("");
@@ -73,15 +84,43 @@ export function useTypingGame() {
       correctCharsRef.current = 0;
       timer.start();
     },
-    [difficulty, currentQuote, timer]
+    [difficulty, timer]
   );
+
+  const stopGame = useCallback(() => {
+    if (statusRef.current !== "playing") return;
+    const elapsed = timer.stop();
+    const finalWpm = calculateWpm(correctCharsRef.current, elapsed);
+    const finalAcc = calculateAccuracy(
+      correctCharsRef.current,
+      totalTypedRef.current
+    );
+    setWpm(finalWpm);
+    setAccuracy(finalAcc);
+    setLastResult({
+      wpm: finalWpm,
+      accuracy: finalAcc,
+      time: elapsed,
+      difficulty,
+      reason: "cancelled",
+      date: Date.now(),
+    });
+    setStatus("finished");
+  }, [difficulty, timer]);
+
+  // 60s timeout
+  useEffect(() => {
+    if (status !== "playing") return;
+    const id = setTimeout(() => finishGame("timeout"), TIMEOUT_MS);
+    return () => clearTimeout(id);
+  }, [status, finishGame]);
 
   const handleInput = useCallback(
     (value) => {
-      if (status !== "playing") return;
+      if (statusRef.current !== "playing") return;
 
       setInputValue(value);
-      const currentWord = words[wordIndex];
+      const currentWord = words[wordIndexRef.current];
       if (!currentWord) return;
 
       if (value.endsWith(" ")) {
@@ -89,37 +128,19 @@ export function useTypingGame() {
         const correct = trimmed === currentWord;
         setTypedWords((prev) => [...prev, { word: trimmed, correct }]);
 
-        if (wordIndex === words.length - 1 && correct) {
-          // Game complete — use refs for accurate final values
-          const elapsed = timer.stop();
-          const finalWpm = calculateWpm(correctCharsRef.current, elapsed);
-          const finalAcc = calculateAccuracy(
-            correctCharsRef.current,
-            totalTypedRef.current
-          );
-          adjustDifficulty(isGoodPerformance(finalWpm, finalAcc));
-          setWpm(finalWpm);
-          setAccuracy(finalAcc);
-          setLastResult({
-            wpm: finalWpm,
-            accuracy: finalAcc,
-            time: elapsed,
-            difficulty,
-            date: Date.now(),
-          });
-          setStatus("finished");
+        if (wordIndexRef.current === words.length - 1 && correct) {
+          finishGame("completed");
         } else {
-          setWordIndex((i) => i + 1);
+          wordIndexRef.current += 1;
+          setWordIndex(wordIndexRef.current);
           setInputValue("");
           setHasError(false);
         }
         return;
       }
 
-      // Every keystroke counts toward total
       totalTypedRef.current += 1;
 
-      // Character matches expected word at this position
       if (currentWord.startsWith(value)) {
         correctCharsRef.current += 1;
         setHasError(false);
@@ -127,14 +148,19 @@ export function useTypingGame() {
         setHasError(true);
       }
 
-      // Update live stats
       setWpm(calculateWpm(correctCharsRef.current, timer.elapsed));
       setAccuracy(
         calculateAccuracy(correctCharsRef.current, totalTypedRef.current)
       );
     },
-    [status, words, wordIndex, difficulty, timer, adjustDifficulty]
+    [words, timer, finishGame]
   );
+
+  const dismissGame = useCallback(() => {
+    setLastResult(null);
+    setStatus("idle");
+    timer.reset();
+  }, [timer]);
 
   return {
     difficulty,
@@ -148,9 +174,10 @@ export function useTypingGame() {
     accuracy,
     elapsed: timer.elapsed,
     progress,
-    streak,
     lastResult,
     startGame,
+    stopGame,
+    dismissGame,
     handleInput,
     setInputValue,
   };

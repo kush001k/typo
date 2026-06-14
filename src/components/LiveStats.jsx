@@ -13,6 +13,10 @@ export default function LiveStats({ wpm, accuracy, elapsed }) {
         <span className="text-accent font-bold text-lg">
           {(elapsed / 1000).toFixed(1)}
         </span>
+        <span>S </span>
+        <span className="font-bold text-lg">
+          / 60
+        </span>
         <span>S</span>
       </div>
     </div>

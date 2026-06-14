@@ -1,27 +1,36 @@
 import { memo } from "react";
 
+const MAX_CELLS = 6;
+
 function HighScoreList({ scores }) {
-  if (!scores.length) return null;
+  // FIFO: show newest first, max 6 cells
+  const display = scores.slice(-MAX_CELLS).reverse();
+
+  if (!display.length) return null;
+
   return (
-    <div className="mt-6">
-      <h3 className="text-xs tracking-widest uppercase text-muted-fg mb-3">
+    <div className="mt-6 w-full max-w-xl mx-auto">
+      <h3 className="text-xs tracking-widest uppercase text-muted-fg mb-3 text-center">
         HIGH SCORES
       </h3>
-      <ul className="space-y-1">
-        {scores.map((s, i) => (
-          <li
-            key={i}
-            className="flex justify-between items-baseline text-sm text-muted-fg border-b border-border pb-1"
+      <div className="grid grid-cols-2 gap-px bg-border border-2 border-border">
+        {display.map((s, i) => (
+          <div
+            key={`${s.date}-${i}`}
+            className="bg-bg p-4 text-center"
           >
-            <span className="text-fg font-bold">
-              #{i + 1}{" "}
-              <span className="text-accent">{s.wpm} WPM</span>
+            <span className="text-2xl font-bold text-accent block">
+              {s.wpm}
             </span>
-            <span>{s.accuracy}% ACC</span>
-            <span>{(s.time / 1000).toFixed(1)}s</span>
-          </li>
+            <span className="text-xs tracking-widest uppercase text-muted-fg block">
+              WPM · {s.accuracy}%
+            </span>
+            <span className="text-xs text-muted-fg block mt-1">
+              {(s.time / 1000).toFixed(1)}s · {(s.difficulty || "MEDIUM").toUpperCase()}
+            </span>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }

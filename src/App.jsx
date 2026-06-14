@@ -2,6 +2,7 @@ import { useCallback, useEffect } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { useTypingGame } from "./hooks/useTypingGame";
 import { useHighScores } from "./hooks/useHighScores";
+import { saveLatestStats } from "./utils/storage";
 import NoiseTexture from "./components/NoiseTexture";
 import LandingScreen from "./components/LandingScreen";
 import GameScreen from "./components/GameScreen";
@@ -12,27 +13,52 @@ export default function App() {
   const { addScore, scores } = useHighScores();
 
   const handleStart = useCallback(
-    (diff) => {
-      game.startGame(diff);
-    },
+    (diff) => game.startGame(diff),
     [game]
   );
 
-  const handlePlayAgain = useCallback(() => {
-    game.startGame(game.difficulty);
+  const handlePlayAgain = useCallback(
+    () => game.startGame(game.difficulty),
+    [game]
+  );
+
+  const handleDismiss = useCallback(() => {
+    game.dismissGame();
+  }, [game]);
+
+  // Enter key starts game, ESC stops game
+  useEffect(() => {
+    const handleKey = (e) => {
+      if (e.key === "Enter" && game.status === "idle") {
+        game.startGame(game.difficulty);
+      }
+      if (e.key === "Escape" && game.status === "playing") {
+        game.stopGame();
+      }
+    };
+    document.addEventListener("keydown", handleKey);
+    return () => document.removeEventListener("keydown", handleKey);
   }, [game]);
 
   // Save score when game finishes
   useEffect(() => {
     if (game.status === "finished" && game.lastResult) {
-      addScore(game.lastResult.difficulty, {
-        wpm: game.lastResult.wpm,
-        accuracy: game.lastResult.accuracy,
-        time: game.lastResult.time,
-        date: game.lastResult.date,
+      const r = game.lastResult;
+      addScore(r.difficulty, {
+        wpm: r.wpm,
+        accuracy: r.accuracy,
+        time: r.time,
+        date: r.date,
+      });
+      saveLatestStats({
+        wpm: r.wpm,
+        accuracy: r.accuracy,
+        wordsTyped: game.wordIndex,
+        time: (r.time / 1000).toFixed(1),
+        difficulty: r.difficulty,
       });
     }
-  }, [game.status, game.lastResult, addScore]);
+  }, [game.status, game.lastResult, game.wordIndex, addScore]);
 
   return (
     <div className="relative min-h-dvh bg-bg text-fg">
@@ -78,7 +104,11 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      <CompletionModal result={game.lastResult} onPlayAgain={handlePlayAgain} />
+      <CompletionModal
+        result={game.lastResult}
+        onPlayAgain={handlePlayAgain}
+        onDismiss={handleDismiss}
+      />
     </div>
   );
 }

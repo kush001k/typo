@@ -4,26 +4,26 @@ const difficulties = [
   {
     key: "easy",
     label: "EASY",
-    desc: "Short quotes, no punctuation",
+    desc: "No uppercase, no punctuation",
     num: "01",
   },
   {
     key: "medium",
     label: "MEDIUM",
-    desc: "Medium quotes, basic punctuation",
+    desc: "Uppercase + simple punctuation",
     num: "02",
   },
   {
     key: "hard",
     label: "HARD",
-    desc: "Long quotes, complex vocabulary",
+    desc: "Uppercase + complex punctuation",
     num: "03",
   },
 ];
 
 export default function DifficultySelect({ onSelect, active }) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-border border-2 border-border">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-border border-2 border-border w-full max-w-3xl mx-auto">
       {difficulties.map((d) => (
         <motion.button
           key={d.key}

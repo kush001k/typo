@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 
 const STORAGE_KEY = "typo-scores";
-const MAX_SCORES = 5;
+const MAX_SCORES = 6;
 
 function loadScores() {
   try {
@@ -14,11 +14,10 @@ function loadScores() {
 export function useHighScores() {
   const [scores, setScores] = useState(loadScores);
 
+  // FIFO: add newest, drop oldest when full
   const addScore = useCallback((difficulty, score) => {
     setScores((prev) => {
-      const list = [...prev[difficulty], score]
-        .sort((a, b) => b.wpm - a.wpm)
-        .slice(0, MAX_SCORES);
+      const list = [...prev[difficulty], score].slice(-MAX_SCORES);
       const next = { ...prev, [difficulty]: list };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
       return next;

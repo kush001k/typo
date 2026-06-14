@@ -13,8 +13,8 @@ function QuoteDisplay({ words, wordIndex, typedWords }) {
           className = "word-highlight";
         }
         return (
-          <span key={`${word}-${i}`} className={`${className} mr-2`}>
-            {word}
+          <span key={`${word}-${i}`} className={className}>
+            {word}{" "}
           </span>
         );
       })}

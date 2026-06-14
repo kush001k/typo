@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { motion } from "motion/react";
 import StatsMarquee from "./StatsMarquee";
 import DifficultySelect from "./DifficultySelect";
@@ -8,8 +9,20 @@ export default function LandingScreen({
   difficulty,
   highScores,
 }) {
+  const allScores = useMemo(() => {
+    const flat = [
+      ...(highScores.easy || []),
+      ...(highScores.medium || []),
+      ...(highScores.hard || []),
+    ];
+    return flat.sort((a, b) => (b.date || 0) - (a.date || 0));
+  }, [highScores]);
+
   return (
     <div className="flex flex-col min-h-dvh">
+      {/* Stats Marquee at top */}
+      <StatsMarquee />
+
       {/* Hero */}
       <div className="flex-1 flex flex-col items-center justify-center px-4 py-20">
         <motion.h1
@@ -32,23 +45,25 @@ export default function LandingScreen({
         >
           TEST YOUR TYPING SPEED. BEAT THE CLOCK. CLIMB THE LEVELS.
         </motion.p>
+
+        <motion.p
+          className="mt-4 text-sm text-muted-fg text-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6, duration: 0.5 }}
+        >
+          PRESS ENTER TO START OR SELECT A DIFFICULTY BELOW
+        </motion.p>
       </div>
 
-      {/* Marquee */}
-      <StatsMarquee />
-
-      {/* Difficulty & Start */}
-      <div className="py-20 px-4 max-w-[90vw] mx-auto w-full">
+      {/* Difficulty & Start — centered */}
+      <div className="py-20 px-4 max-w-full mx-auto w-full flex flex-col items-center">
         <h2 className="text-xs tracking-widest uppercase text-muted-fg mb-6">
           SELECT DIFFICULTY
         </h2>
         <DifficultySelect onSelect={onStart} active={difficulty} />
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-px mt-8">
-          <HighScoreList scores={highScores.easy} />
-          <HighScoreList scores={highScores.medium} />
-          <HighScoreList scores={highScores.hard} />
-        </div>
+        <HighScoreList scores={allScores} />
       </div>
 
       {/* Footer */}
