@@ -1,5 +1,7 @@
 # TYPO
 
+**🔗 Live Site:** [https://typo.kushnaik364.workers.dev/](https://typo.kushnaik364.workers.dev/)
+
 A kinetic typing speed game built with React, Tailwind CSS, and Framer Motion. Test your typing skills across three difficulty levels with real-time WPM and accuracy tracking.
 
 ## Features
