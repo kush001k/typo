@@ -25,6 +25,7 @@ dist-ssr
 
 .agents
 graphify-out
+DESIGN.md
 skills-lock.json
 
 # wrangler files
