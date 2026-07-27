@@ -3,14 +3,13 @@ import { AnimatePresence, motion } from "motion/react";
 import { useTypingGame } from "./hooks/useTypingGame";
 import { useHighScores } from "./hooks/useHighScores";
 import { saveLatestStats } from "./utils/storage";
-import NoiseTexture from "./components/NoiseTexture";
 import LandingScreen from "./components/LandingScreen";
 import GameScreen from "./components/GameScreen";
 import CompletionModal from "./components/CompletionModal";
 
 export default function App() {
   const game = useTypingGame();
-  const { addScore, scores } = useHighScores();
+  const { addScore } = useHighScores();
 
   const handleStart = useCallback(
     (diff) => game.startGame(diff),
@@ -60,10 +59,17 @@ export default function App() {
     }
   }, [game.status, game.lastResult, game.wordIndex, addScore]);
 
+  const stats =
+    game.lastResult
+      ? {
+          wpm: game.lastResult.wpm,
+          accuracy: game.lastResult.accuracy,
+          time: (game.lastResult.time / 1000).toFixed(1),
+        }
+      : null;
+
   return (
     <div className="relative min-h-dvh bg-bg text-fg">
-      <NoiseTexture />
-
       <AnimatePresence mode="wait">
         {game.status === "idle" || game.status === "finished" ? (
           <motion.div
@@ -76,7 +82,8 @@ export default function App() {
             <LandingScreen
               onStart={handleStart}
               difficulty={game.difficulty}
-              highScores={scores}
+              stats={stats}
+              gameStatus={game.status}
             />
           </motion.div>
         ) : (

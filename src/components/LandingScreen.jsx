@@ -1,27 +1,18 @@
-import { useMemo } from "react";
 import { motion } from "motion/react";
 import StatsMarquee from "./StatsMarquee";
 import DifficultySelect from "./DifficultySelect";
-import HighScoreList from "./HighScoreList";
 
 export default function LandingScreen({
   onStart,
   difficulty,
-  highScores,
+  stats,
+  gameStatus,
 }) {
-  const allScores = useMemo(() => {
-    const flat = [
-      ...(highScores.easy || []),
-      ...(highScores.medium || []),
-      ...(highScores.hard || []),
-    ];
-    return flat.sort((a, b) => (b.date || 0) - (a.date || 0));
-  }, [highScores]);
 
   return (
     <div className="flex flex-col min-h-dvh">
       {/* Stats Marquee at top */}
-      <StatsMarquee />
+      <StatsMarquee stats={stats} gameStatus={gameStatus} />
 
       {/* Hero */}
       <div className="flex-1 flex flex-col items-center justify-center px-4 py-20">
@@ -62,8 +53,6 @@ export default function LandingScreen({
           SELECT DIFFICULTY
         </h2>
         <DifficultySelect onSelect={onStart} active={difficulty} />
-
-        <HighScoreList scores={allScores} />
       </div>
 
       {/* Footer */}

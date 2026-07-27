@@ -26,7 +26,6 @@ A kinetic typing speed game built with React, Tailwind CSS, and Framer Motion. T
 | [React 19](https://react.dev/)                            | UI framework               |
 | [TailwindCSS v4](https://tailwindcss.com/)               | Utility-first styling      |
 | [Framer Motion](https://www.framer.com/motion/)           | Animations & transitions   |
-| [react-fast-marquee](https://www.react-fast-marquee.com/) | Infinite scrolling marquee |
 
 ## Getting Started
 
@@ -57,7 +56,6 @@ src/
 │   ├── HighScoreList.jsx   — 2×3 FIFO high score grid
 │   ├── LandingScreen.jsx   — Hero + marquee + difficulty select
 │   ├── LiveStats.jsx       — Real-time WPM/accuracy/time
-│   ├── NoiseTexture.jsx    — SVG noise overlay
 │   ├── ProgressBar.jsx     — Completion progress bar
 │   ├── QuoteDisplay.jsx    — Word-by-word highlighting
 │   ├── StatsMarquee.jsx    — Latest game stats marquee

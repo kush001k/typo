@@ -7,11 +7,4 @@ import { cloudflare } from "@cloudflare/vite-plugin";
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss(), cloudflare()],
-  // react-fast-marquee uglyfix
-  optimizeDeps: {
-    include: ["react-fast-marquee"],
-  },
-  ssr: {
-    noExternal: ["react-fast-marquee"],
-  },
 });
