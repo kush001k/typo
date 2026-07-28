@@ -5,7 +5,7 @@ import { useRef, useLayoutEffect, useState, useEffect } from "react";
 function StatRow({ label, value }) {
   return (
     <div className="flex items-baseline whitespace-nowrap tracking-widest uppercase text-muted-fg">
-      <span className="text-accent font-bold text-xl md:text-2xl min-[1441px]:text-3xl">{value}</span>
+      <span className="text-accent font-bold text-xl md:text-2xl min-[1440px]:text-3xl">{value}</span>
       <span className="text-xs md:text-sm min-[1441px]:text-base">{label}</span>
     </div>
   );
@@ -13,7 +13,7 @@ function StatRow({ label, value }) {
 
 function StatGroup({ stats }) {
   return (
-    <div className="flex items-center justify-around w-[240px] shrink-0">
+    <div className="flex items-center justify-around w-75 shrink-0">
       <StatRow label="WPM" value={stats?.wpm ?? "—"} />
       <span className="text-muted-fg/30">
         <b>/</b>
@@ -81,20 +81,11 @@ export default function StatsMarquee({ stats, gameStatus }) {
         ) : (
           <div
             key="content"
-            className="absolute inset-0"
+            className="marquee-track"
+            style={{ animationDuration: `${duration}s` }}
           >
-            {Array.from({ length: itemCount }, (_, i) => (
-              <div
-                key={i}
-                className="marquee-item"
-                style={{
-                  left: `max(calc(240px * ${itemCount}), 100%)`,
-                  animationDuration: `${duration}s`,
-                  animationDelay: `calc(${duration}s / ${itemCount} * (${itemCount} - ${i}) * -1)`,
-                }}
-              >
-                <StatGroup stats={effectiveStats} />
-              </div>
+            {Array.from({ length: itemCount * 2 }, (_, i) => (
+              <StatGroup key={i} stats={effectiveStats} />
             ))}
           </div>
         )}

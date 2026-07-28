@@ -76,19 +76,20 @@ body {
   outline-offset: 2px;
 }
 
-/* Stats marquee — pure CSS absolute-positioned scroll */ 
+/* Stats marquee — pure CSS seamless scroll */ 
 @keyframes marquee-scroll-left {
   to {
-    left: -240px;
+    transform: translateX(-50%);
   }
 }
 
-.marquee-item {
+.marquee-track {
+  display: flex;
   position: absolute;
   animation-name: marquee-scroll-left;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
-  will-change: left;
+  will-change: transform;
 }
 
 /* Respect reduced motion */
