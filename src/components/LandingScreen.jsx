@@ -15,7 +15,7 @@ export default function LandingScreen({
       <StatsMarquee stats={stats} gameStatus={gameStatus} />
 
       {/* Hero */}
-      <div className="flex-1 flex flex-col items-center justify-center px-4 py-20">
+      <div className="flex-1 flex flex-col items-center justify-center px-4 py-12 sm:py-16 lg:py-20">
         <motion.h1
           className="text-[clamp(4rem,15vw,16rem)] font-bold uppercase tracking-tighter leading-none text-center"
           initial={{ opacity: 0, y: 40 }}
@@ -29,7 +29,7 @@ export default function LandingScreen({
         </motion.h1>
 
         <motion.p
-          className="mt-4 text-lg md:text-xl text-muted-fg text-center max-w-xl"
+          className="mt-4 text-lg md:text-2xl lg:text-3xl text-muted-fg text-center"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3, duration: 0.5 }}
@@ -38,7 +38,7 @@ export default function LandingScreen({
         </motion.p>
 
         <motion.p
-          className="mt-4 text-sm text-muted-fg text-center"
+          className="mt-4 text-sm md:text-base lg:text-lg text-muted-fg text-center"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6, duration: 0.5 }}
@@ -48,8 +48,8 @@ export default function LandingScreen({
       </div>
 
       {/* Difficulty & Start — centered */}
-      <div className="py-20 px-4 max-w-full mx-auto w-full flex flex-col items-center">
-        <h2 className="text-xs tracking-widest uppercase text-muted-fg mb-6">
+      <div className="py-12 sm:py-16 lg:py-20 px-4 mx-auto w-full flex flex-col items-center">
+        <h2 className="text-xs md:text-sm lg:text-base tracking-widest uppercase text-muted-fg mb-6">
           SELECT DIFFICULTY
         </h2>
         <DifficultySelect onSelect={onStart} active={difficulty} />
@@ -57,7 +57,7 @@ export default function LandingScreen({
 
       {/* Footer */}
       <div className="border-t-2 border-border py-6 px-4">
-        <p className="text-xs tracking-widest uppercase text-muted-fg text-center">
+        <p className="text-xs md:text-sm tracking-widest uppercase text-muted-fg text-center">
           TYPO — A KINETIC TYPING GAME
         </p>
       </div>

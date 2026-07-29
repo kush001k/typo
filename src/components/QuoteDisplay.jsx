@@ -2,7 +2,7 @@ import { memo } from "react";
 
 function QuoteDisplay({ words, wordIndex, typedWords }) {
   return (
-    <p className="text-xl md:text-2xl lg:text-3xl leading-relaxed font-medium select-none">
+    <p className="text-lg sm:text-xl md:text-2xl lg:text-4xl leading-relaxed font-medium select-none min-h-[4.5rem] sm:min-h-[5rem]">
       {words.map((word, i) => {
         let className = "text-muted-fg";
         if (i < wordIndex) {
