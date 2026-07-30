@@ -14,10 +14,12 @@
   --font-family-sans: "Space Grotesk", "Inter", system-ui, sans-serif;
 }
 
-*, *::before, *::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+@layer base {
+  *, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 }
 
 html {
@@ -90,6 +92,15 @@ body {
   animation-timing-function: linear;
   animation-iteration-count: infinite;
   will-change: transform;
+}
+
+/* Pulsating yellow text for instruction */
+@keyframes pulse-yellow {
+  0%, 100% { color: var(--color-muted-fg); }
+  50% { color: var(--color-accent); }
+}
+.pulse-yellow {
+  animation: pulse-yellow 1s ease-in-out infinite;
 }
 
 /* Respect reduced motion */

@@ -5,7 +5,9 @@ import { useRef, useLayoutEffect, useState, useEffect } from "react";
 function StatRow({ label, value }) {
   return (
     <div className="flex items-baseline whitespace-nowrap tracking-widest uppercase text-muted-fg">
-      <span className="text-accent font-bold text-xl md:text-3xl 2xl:text-4xl">{value}</span>
+      <span className="text-accent font-bold text-xl md:text-3xl 2xl:text-4xl">
+        {value}
+      </span>
       <span className="text-xs md:text-sm 2xl:text-base">{label}</span>
     </div>
   );
@@ -13,7 +15,7 @@ function StatRow({ label, value }) {
 
 function StatGroup({ stats }) {
   return (
-    <div className="flex items-center justify-around w-75 shrink-0">
+    <div className="flex items-center justify-around w-75 md:w-96 shrink-0">
       <StatRow label="WPM" value={stats?.wpm ?? "—"} />
       <span className="text-muted-fg/30">
         <b>/</b>
@@ -60,7 +62,7 @@ export default function StatsMarquee({ stats, gameStatus }) {
   const duration = 2 * (itemCount + 1);
 
   return (
-    <div className="relative flex w-full overflow-hidden border-y-2 border-border h-12 items-center">
+    <div className="relative flex w-full overflow-hidden border-b-2 border-border h-12 items-center">
       <div className="absolute inset-0 pointer-events-none z-10 bg-linear-to-r from-bg/60 to-transparent w-16" />
       <div className="absolute inset-0 pointer-events-none z-10 bg-linear-to-l from-bg/60 to-transparent w-16 right-0 left-auto" />
 

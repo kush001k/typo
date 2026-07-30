@@ -18,12 +18,12 @@ function TypeInput({ value, onChange, hasError, disabled, placeholder }) {
         placeholder={placeholder || "TYPE HERE..."}
         aria-label="Current word"
           className={`w-full text-2xl md:text-4xl lg:text-5xl font-bold uppercase tracking-tight
-          bg-transparent border-b-2 px-0 py-4 outline-none transition-colors
+          bg-transparent px-0 py-4 outline-none transition-colors
           placeholder:text-muted placeholder:font-normal placeholder:tracking-wider
           ${
             hasError
-              ? "border-error text-error"
-              : "border-border focus:border-accent text-fg"
+              ? "text-error"
+              : "text-fg"
           }
           disabled:opacity-40`}
       />

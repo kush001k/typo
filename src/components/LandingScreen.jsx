@@ -10,12 +10,12 @@ export default function LandingScreen({
 }) {
 
   return (
-    <div className="flex flex-col min-h-dvh">
+    <div className="flex flex-col min-h-dvh px-10">
       {/* Stats Marquee at top */}
       <StatsMarquee stats={stats} gameStatus={gameStatus} />
 
       {/* Hero */}
-      <div className="flex-1 flex flex-col items-center justify-center px-4 py-12 sm:py-16 lg:py-20">
+      <div className="flex-1 flex flex-col items-center justify-center gap-4 sm:gap-6 md:gap-8 px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-24 py-12 sm:py-16 lg:py-20">
         <motion.h1
           className="text-[clamp(4rem,15vw,16rem)] font-bold uppercase tracking-tighter leading-none text-center"
           initial={{ opacity: 0, y: 40 }}
@@ -29,7 +29,7 @@ export default function LandingScreen({
         </motion.h1>
 
         <motion.p
-          className="mt-4 text-lg md:text-2xl lg:text-3xl text-muted-fg text-center"
+          className="text-lg md:text-2xl lg:text-3xl text-muted-fg text-center"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3, duration: 0.5 }}
@@ -38,7 +38,7 @@ export default function LandingScreen({
         </motion.p>
 
         <motion.p
-          className="mt-4 text-sm md:text-base lg:text-lg text-muted-fg text-center"
+          className="text-sm md:text-base lg:text-lg text-center pulse-yellow"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6, duration: 0.5 }}
@@ -48,7 +48,7 @@ export default function LandingScreen({
       </div>
 
       {/* Difficulty & Start — centered */}
-      <div className="py-12 sm:py-16 lg:py-20 px-4 mx-auto w-full flex flex-col items-center">
+      <div className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-24 mx-auto w-full flex flex-col items-center">
         <h2 className="text-xs md:text-sm lg:text-base tracking-widest uppercase text-muted-fg mb-6">
           SELECT DIFFICULTY
         </h2>
@@ -56,7 +56,7 @@ export default function LandingScreen({
       </div>
 
       {/* Footer */}
-      <div className="border-t-2 border-border py-6 px-4">
+      <div className="border-t-2 border-border py-6 px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-24">
         <p className="text-xs md:text-sm tracking-widest uppercase text-muted-fg text-center">
           TYPO — A KINETIC TYPING GAME
         </p>
