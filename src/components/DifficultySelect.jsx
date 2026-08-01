@@ -30,20 +30,22 @@ export default function DifficultySelect({ onSelect, active }) {
           onClick={() => onSelect(d.key)}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className={`group p-6 sm:p-8 md:p-12 text-left cursor-pointer transition-colors duration-300
+          className={`group p-1 sm:px-2 md:px-3 text-left cursor-pointer transition-colors duration-300
             ${
               active === d.key
                 ? "bg-accent text-accent-fg"
                 : "bg-bg text-fg hover:bg-accent hover:text-accent-fg"
             }`}
         >
-          <span className="block text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter opacity-20 group-hover:opacity-40 mb-2">
-            {d.num}
-          </span>
-          <span className="block text-2xl md:text-3xl lg:text-4xl font-bold uppercase tracking-tighter mb-1">
-            {d.label}
-          </span>
-          <span className="block text-sm md:text-base lg:text-lg text-muted-fg group-hover:text-accent-fg/70">
+          <div className="flex items-baseline gap-2">
+            <span className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter opacity-20 group-hover:opacity-40">
+              {d.num}
+            </span>
+            <span className="text-2xl md:text-3xl lg:text-4xl font-bold uppercase tracking-tighter">
+              {d.label}
+            </span>
+          </div>
+          <span className="block text-sm md:text-lg lg:text-xl text-muted-fg group-hover:text-accent-fg/70">
             {d.desc}
           </span>
         </motion.button>

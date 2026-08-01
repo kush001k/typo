@@ -8,14 +8,13 @@ export default function LandingScreen({
   stats,
   gameStatus,
 }) {
-
   return (
-    <div className="flex flex-col min-h-dvh px-10">
-      {/* Stats Marquee at top */}
+    <div className="relative flex flex-col min-h-dvh max-h-dvh px-4 sm:px-6 overflow-hidden">
+      {/* Stats Marquee at top — pinned */}
       <StatsMarquee stats={stats} gameStatus={gameStatus} />
 
       {/* Hero */}
-      <div className="flex-1 flex flex-col items-center justify-center gap-4 sm:gap-6 md:gap-8 px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-24 py-12 sm:py-16 lg:py-20">
+      <div className="flex flex-col items-center justify-center gap-2 sm:gap-4 md:gap-6 mt-10 pt-8">
         <motion.h1
           className="text-[clamp(4rem,15vw,16rem)] font-bold uppercase tracking-tighter leading-none text-center"
           initial={{ opacity: 0, y: 40 }}
@@ -38,7 +37,7 @@ export default function LandingScreen({
         </motion.p>
 
         <motion.p
-          className="text-sm md:text-base lg:text-lg text-center pulse-yellow"
+          className="text-sm md:text-lg lg:text-lg text-center pulse-yellow"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6, duration: 0.5 }}
@@ -47,18 +46,19 @@ export default function LandingScreen({
         </motion.p>
       </div>
 
-      {/* Difficulty & Start — centered */}
-      <div className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-24 mx-auto w-full flex flex-col items-center">
-        <h2 className="text-xs md:text-sm lg:text-base tracking-widest uppercase text-muted-fg mb-6">
+      {/* Difficulty — ungrouped */}
+      <div className="mb-20 px-2 sm:px-4 mx-auto w-full flex flex-col items-center absolute bottom-0 left-0">
+        <h2 className="text-sm md:text-lg lg:text-xl tracking-widest uppercase text-muted-fg mb-4">
           SELECT DIFFICULTY
         </h2>
         <DifficultySelect onSelect={onStart} active={difficulty} />
       </div>
 
-      {/* Footer */}
-      <div className="border-t-2 border-border py-6 px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-24">
-        <p className="text-xs md:text-sm tracking-widest uppercase text-muted-fg text-center">
-          TYPO — A KINETIC TYPING GAME
+      {/* Footer — ungrouped, absolute, fixed height */}
+      <div className="absolute bottom-0 left-0 right-0 h-15 border-t-2 border-border w-full flex items-center justify-center">
+        <p className="text-sm md:text-lg tracking-widest uppercase text-muted-fg text-center">
+          <span className="text-accent font-bold">TYPO&nbsp;</span>— A KINETIC
+          TYPING GAME
         </p>
       </div>
     </div>

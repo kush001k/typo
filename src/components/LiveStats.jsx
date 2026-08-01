@@ -1,6 +1,6 @@
 export default function LiveStats({ wpm, accuracy, elapsed }) {
   return (
-    <div className="flex flex-wrap gap-4 sm:gap-6 md:gap-8 text-xs md:text-sm lg:text-base tracking-widest uppercase text-muted-fg">
+    <div className="flex flex-wrap gap-4 sm:gap-6 md:gap-8 text-sm md:text-lg lg:text-xl tracking-widest uppercase text-muted-fg">
       <div>
         <span className="text-accent font-bold text-lg md:text-xl lg:text-2xl">{wpm}</span>{" "}
         <span>WPM</span>

@@ -43,7 +43,7 @@ export default function CompletionModal({ result, onPlayAgain, onDismiss }) {
                 <span className="block text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-accent">
                   {result.wpm}
                 </span>
-                <span className="text-[10px] sm:text-xs md:text-sm tracking-widest uppercase text-muted-fg">
+                <span className="text-[10px] sm:text-sm md:text-lg tracking-widest uppercase text-muted-fg">
                   WPM
                 </span>
               </div>
@@ -51,7 +51,7 @@ export default function CompletionModal({ result, onPlayAgain, onDismiss }) {
                 <span className="block text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-accent">
                   {result.accuracy}
                 </span>
-                <span className="text-[10px] sm:text-xs md:text-sm tracking-widest uppercase text-muted-fg">
+                <span className="text-[10px] sm:text-sm md:text-lg tracking-widest uppercase text-muted-fg">
                   % ACC
                 </span>
               </div>
@@ -59,19 +59,19 @@ export default function CompletionModal({ result, onPlayAgain, onDismiss }) {
                 <span className="block text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-accent">
                   {(result.time / 1000).toFixed(1)}
                 </span>
-                <span className="text-[10px] sm:text-xs md:text-sm tracking-widest uppercase text-muted-fg">
+                <span className="text-[10px] sm:text-sm md:text-lg tracking-widest uppercase text-muted-fg">
                   SECONDS
                 </span>
               </div>
             </div>
 
-            <p className="text-xs md:text-sm tracking-widest uppercase text-muted-fg mb-6">
+            <p className="text-sm md:text-lg tracking-widest uppercase text-muted-fg mb-6">
               DIFFICULTY: {result.difficulty.toUpperCase()}
             </p>
 
             <button
               onClick={onPlayAgain}
-              className="w-full py-4 px-8 bg-accent text-accent-fg text-sm md:text-base font-bold uppercase tracking-tighter
+              className="w-full py-4 px-8 bg-accent text-accent-fg text-sm md:text-lg font-bold uppercase tracking-tighter
                 hover:scale-[1.02] active:scale-[0.98] transition-transform cursor-pointer"
             >
               PLAY AGAIN
@@ -79,7 +79,7 @@ export default function CompletionModal({ result, onPlayAgain, onDismiss }) {
 
             <button
               onClick={onDismiss}
-              className="w-full mt-2 py-3 text-sm md:text-base font-bold uppercase tracking-tighter text-muted-fg
+              className="w-full mt-2 py-3 text-sm md:text-lg font-bold uppercase tracking-tighter text-muted-fg
                 hover:text-fg transition-colors cursor-pointer"
             >
               BACK TO HOME

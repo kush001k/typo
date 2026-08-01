@@ -8,7 +8,7 @@ function StatRow({ label, value }) {
       <span className="text-accent font-bold text-xl md:text-3xl 2xl:text-4xl">
         {value}
       </span>
-      <span className="text-xs md:text-sm 2xl:text-base">{label}</span>
+      <span className="text-sm md:text-lg 2xl:text-lg">{label}</span>
     </div>
   );
 }
@@ -62,7 +62,7 @@ export default function StatsMarquee({ stats, gameStatus }) {
   const duration = 2 * (itemCount + 1);
 
   return (
-    <div className="relative flex w-full overflow-hidden border-b-2 border-border h-12 items-center">
+    <div className="absolute top-0 left-0 right-0 z-10 flex w-full overflow-hidden border-b-2 border-border h-12 items-center">
       <div className="absolute inset-0 pointer-events-none z-10 bg-linear-to-r from-bg/60 to-transparent w-16" />
       <div className="absolute inset-0 pointer-events-none z-10 bg-linear-to-l from-bg/60 to-transparent w-16 right-0 left-auto" />
 
@@ -76,7 +76,7 @@ export default function StatsMarquee({ stats, gameStatus }) {
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.25 }}
           >
-            <p className="text-xs tracking-widest uppercase text-muted-fg">
+            <p className="text-sm tracking-widest uppercase text-muted-fg">
               NO RECENT STATS — FINISH A GAME TO SEE RESULTS
             </p>
           </motion.div>
