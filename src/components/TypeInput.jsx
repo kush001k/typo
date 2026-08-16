@@ -25,7 +25,7 @@ function TypeInput({ value, onChange, hasError, disabled, placeholder }) {
               ? "text-error"
               : "text-fg"
           }
-          disabled:opacity-40`}
+          disabled:opacity-60`}
       />
     </div>
   );

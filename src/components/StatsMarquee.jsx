@@ -76,7 +76,7 @@ export default function StatsMarquee({ stats, gameStatus }) {
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.25 }}
           >
-            <p className="text-sm tracking-widest uppercase text-muted-fg">
+            <p className="text-sm tracking-widest uppercase text-muted-fg text-center">
               NO RECENT STATS — FINISH A GAME TO SEE RESULTS
             </p>
           </motion.div>

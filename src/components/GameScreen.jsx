@@ -17,30 +17,31 @@ export default function GameScreen({
   onInput,
 }) {
   return (
-    <div className="relative flex flex-col gap-8 max-h-dvh mx-auto w-full">
-      {/* Header — pinned top */}
-      <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-4 sm:px-6 md:px-12 lg:px-16 xl:px-24 2xl:px-32">
-        <span className="text-sm md:text-lg lg:text-xl tracking-widest uppercase text-muted-fg">
-          {difficulty} MODE
-        </span>
-        <LiveStats wpm={wpm} accuracy={accuracy} elapsed={elapsed} />
-      </div>
-
-      {/* Middle content — centered between pinned header/footer */}
-      <div className="flex-1 flex flex-col justify-center gap-8 pt-20 pb-28 px-4 sm:px-6 md:px-12 lg:px-16 xl:px-24 2xl:px-32">
-        <ProgressBar progress={progress} />
-
-        <div className="mt-4">
-          <QuoteDisplay
-            words={words}
-            wordIndex={wordIndex}
-            typedWords={typedWords}
-          />
+    <div className="h-screen flex flex-col mx-auto w-full">
+      {/* Header — normal flow, column layout with centered content */}
+      <header className="h-[10vh] flex flex-col items-center justify-center gap-4 px-4 sm:px-6 md:px-12 lg:px-16 xl:px-24 2xl:px-32">
+        <div className="w-full flex items-center justify-between">
+          <span className="text-xl md:text-2xl lg:text-3xl tracking-widest uppercase font-bold text-accent">
+            {difficulty} MODE
+          </span>
+          <LiveStats wpm={wpm} accuracy={accuracy} elapsed={elapsed} />
         </div>
+        <div className="w-full">
+          <ProgressBar progress={progress} />
+        </div>
+      </header>
+
+      {/* Quotes container — 60vh, vertically scrollable, centered text */}
+      <div className="h-[78vh] overflow-y-scroll text-justify px-4 sm:px-6 md:px-12 lg:px-16 xl:px-24 2xl:px-32">
+        <QuoteDisplay
+          words={words}
+          wordIndex={wordIndex}
+          typedWords={typedWords}
+        />
       </div>
 
-      {/* Footer — pinned bottom */}
-      <div className="absolute bottom-0 left-0 right-0 px-4 sm:px-6 md:px-12 lg:px-16 xl:px-24 2xl:px-32">
+      {/* Typing input — bottom 20vh */}
+      <footer className="flex h-[12vh] px-4 sm:px-6 md:px-12 lg:px-16 xl:px-24 2xl:px-32 items-center">
         <TypeInput
           value={inputValue}
           onChange={onInput}
@@ -48,7 +49,7 @@ export default function GameScreen({
           disabled={false}
           placeholder="TYPE CURRENT WORD..."
         />
-      </div>
+      </footer>
     </div>
   );
 }
