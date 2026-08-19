@@ -12,7 +12,7 @@ function QuoteDisplay({ words, wordIndex, typedWords }) {
   }, [wordIndex]);
 
   return (
-    <p className="text-lg sm:text-xl md:text-2xl lg:text-4xl leading-relaxed font-medium select-none min-h-[4.5rem] sm:min-h-[5rem]">
+    <p className="text-lg sm:text-xl md:text-2xl lg:text-4xl leading-relaxed font-medium select-none min-h-18 sm:min-h-20">
       {words.map((word, i) => {
         let className = "text-muted-fg";
         if (i < wordIndex) {

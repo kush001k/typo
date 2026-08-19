@@ -6,6 +6,7 @@ export function generateWordSequence(quotesPool, count, lastQuote = "") {
   while (totalWords < count) {
     const remaining = count - totalWords;
     const candidates = quotesPool.filter((q) => q !== lastQuote);
+    // NOSONAR: Math.random is fine here — picking a random quote for a game, not security-sensitive
     const quote = candidates[Math.floor(Math.random() * candidates.length)];
     lastQuote = quote;
     const words = quote.split(" ");

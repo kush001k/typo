@@ -7,7 +7,7 @@ export function calculateWpm(correctChars, elapsedMs) {
 
 // Accuracy = (correct characters / total typed) * 100
 export function calculateAccuracy(correctChars, totalTyped) {
-  if (totalTyped === 0) return 100;
+  if (totalTyped === 0) return 0;
   return Math.round((correctChars / totalTyped) * 100);
 }
 
@@ -22,5 +22,6 @@ export function isPoorPerformance(wpm, accuracy) {
 // Get a random quote from the given difficulty, avoiding the last one shown
 export function getRandomQuote(difficultyPool, lastQuote = "") {
   const candidates = difficultyPool.filter((q) => q !== lastQuote);
+  // NOSONAR: Math.random is fine here — picking a random quote for a game, not security-sensitive
   return candidates[Math.floor(Math.random() * candidates.length)];
 }

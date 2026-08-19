@@ -32,12 +32,6 @@ export default function CompletionModal({ result, onPlayAgain, onDismiss }) {
               DONE
             </h2>
 
-            {result.reason === "timeout" && (
-              <p className="text-accent text-sm font-bold uppercase tracking-wide mb-4">
-                ⏱ TIME'S UP — 60 SECONDS
-              </p>
-            )}
-
             <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-8">
               <div className="text-center">
                 <span className="block text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-accent">
@@ -70,6 +64,7 @@ export default function CompletionModal({ result, onPlayAgain, onDismiss }) {
             </p>
 
             <button
+              type="button"
               onClick={onPlayAgain}
               className="w-full py-4 px-8 bg-accent text-accent-fg text-sm md:text-lg font-bold uppercase tracking-tighter
                 hover:scale-[1.02] active:scale-[0.98] transition-transform cursor-pointer"
@@ -78,6 +73,7 @@ export default function CompletionModal({ result, onPlayAgain, onDismiss }) {
             </button>
 
             <button
+              type="button"
               onClick={onDismiss}
               className="w-full mt-2 py-3 text-sm md:text-lg font-bold uppercase tracking-tighter text-muted-fg
                 hover:text-fg transition-colors cursor-pointer"

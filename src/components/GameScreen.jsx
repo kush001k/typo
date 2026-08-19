@@ -19,14 +19,19 @@ export default function GameScreen({
   return (
     <div className="h-screen flex flex-col mx-auto w-full">
       {/* Header — normal flow, column layout with centered content */}
-      <header className="h-[10vh] flex flex-col items-center justify-center gap-4 px-4 sm:px-6 md:px-12 lg:px-16 xl:px-24 2xl:px-32">
-        <div className="w-full flex items-center justify-between">
+      <header className="h-[10vh] flex flex-col justify-center px-4 sm:px-6 md:px-12 lg:px-16 xl:px-24 2xl:px-32 relative">
+        <div className="w-full grid grid-cols-3 items-center">
           <span className="text-xl md:text-2xl lg:text-3xl tracking-widest uppercase font-bold text-accent">
             {difficulty} MODE
           </span>
-          <LiveStats wpm={wpm} accuracy={accuracy} elapsed={elapsed} />
+          <p className="text-center text-md md:text-lg lg:text-xl tracking-widest uppercase text-muted-fg">
+            PRESS <span className="text-accent font-bold">ESC</span> TO EXIT
+          </p>
+          <div>
+            <LiveStats wpm={wpm} accuracy={accuracy} elapsed={elapsed} />
+          </div>
         </div>
-        <div className="w-full">
+        <div className="w-full absolute bottom-0">
           <ProgressBar progress={progress} />
         </div>
       </header>

@@ -5,6 +5,7 @@ import { useHighScores } from "./hooks/useHighScores";
 import { saveLatestStats } from "./utils/storage";
 import LandingScreen from "./components/LandingScreen";
 import GameScreen from "./components/GameScreen";
+import LoadingScreen from "./components/LoadingScreen";
 import CompletionModal from "./components/CompletionModal";
 
 export default function App() {
@@ -68,47 +69,69 @@ export default function App() {
         }
       : null;
 
+  const renderScreen = () => {
+    if (game.status === "idle" || game.status === "finished") {
+      return (
+        <motion.div
+          key="landing"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <LandingScreen
+            onStart={handleStart}
+            difficulty={game.difficulty}
+            stats={stats}
+            gameStatus={game.status}
+          />
+        </motion.div>
+      );
+    }
+
+    if (game.status === "loading") {
+      return (
+        <motion.div
+          key="loading"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <LoadingScreen difficulty={game.difficulty} />
+        </motion.div>
+      );
+    }
+
+    return (
+      <motion.div
+        key="game"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        <GameScreen
+          words={game.words}
+          wordIndex={game.wordIndex}
+          typedWords={game.typedWords}
+          inputValue={game.inputValue}
+          hasError={game.hasError}
+          wpm={game.wpm}
+          accuracy={game.accuracy}
+          elapsed={game.elapsed}
+          progress={game.progress}
+          difficulty={game.difficulty}
+          onInput={game.handleInput}
+        />
+      </motion.div>
+    );
+  };
+
   return (
     <div className="relative min-h-dvh bg-bg text-fg">
       <AnimatePresence mode="wait">
-        {game.status === "idle" || game.status === "finished" ? (
-          <motion.div
-            key="landing"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <LandingScreen
-              onStart={handleStart}
-              difficulty={game.difficulty}
-              stats={stats}
-              gameStatus={game.status}
-            />
-          </motion.div>
-        ) : (
-          <motion.div
-            key="game"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <GameScreen
-              words={game.words}
-              wordIndex={game.wordIndex}
-              typedWords={game.typedWords}
-              inputValue={game.inputValue}
-              hasError={game.hasError}
-              wpm={game.wpm}
-              accuracy={game.accuracy}
-              elapsed={game.elapsed}
-              progress={game.progress}
-              difficulty={game.difficulty}
-              onInput={game.handleInput}
-            />
-          </motion.div>
-        )}
+        {renderScreen()}
       </AnimatePresence>
 
       <CompletionModal

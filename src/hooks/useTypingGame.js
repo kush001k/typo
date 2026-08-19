@@ -1,16 +1,16 @@
 import { useState, useCallback, useMemo, useRef, useEffect } from "react";
-import { quotes } from "../data/quotes";
 import {
   calculateWpm,
   calculateAccuracy,
 } from "../utils/scoring";
 import { generateWordSequence } from "../utils/sequencing";
 import { useTimer } from "./useTimer";
+import { useGeneratedContent } from "./useGeneratedContent";
 
-const WORD_COUNT = 150;
-const TIMEOUT_MS = 60_000;
+const WORD_COUNT = 200;
 
 export function useTypingGame() {
+  const { refreshLevel } = useGeneratedContent();
   const [difficulty, setDifficulty] = useState("medium");
   const [status, setStatus] = useState("idle");
   const [currentQuote, setCurrentQuote] = useState("");
@@ -19,7 +19,7 @@ export function useTypingGame() {
   const [inputValue, setInputValue] = useState("");
   const [hasError, setHasError] = useState(false);
   const [wpm, setWpm] = useState(0);
-  const [accuracy, setAccuracy] = useState(100);
+  const [accuracy, setAccuracy] = useState(0);
   const [lastResult, setLastResult] = useState(null);
 
   const timer = useTimer();
@@ -65,10 +65,13 @@ export function useTypingGame() {
   );
 
   const startGame = useCallback(
-    (diff) => {
+    async (diff) => {
       const d = diff || difficulty;
       if (diff) setDifficulty(d);
-      const pool = quotes[d];
+      // Enter loading state while the LLM generates content for this level
+      setStatus("loading");
+      setLastResult(null);
+      const pool = await refreshLevel(d);
       const sequence = generateWordSequence(pool, WORD_COUNT);
       wordIndexRef.current = 0;
       setCurrentQuote(sequence);
@@ -77,14 +80,13 @@ export function useTypingGame() {
       setInputValue("");
       setHasError(false);
       setWpm(0);
-      setAccuracy(100);
-      setStatus("playing");
-      setLastResult(null);
+      setAccuracy(0);
       totalTypedRef.current = 0;
       correctCharsRef.current = 0;
       timer.start();
+      setStatus("playing");
     },
-    [difficulty, timer]
+    [difficulty, timer, refreshLevel]
   );
 
   const stopGame = useCallback(() => {
@@ -107,13 +109,6 @@ export function useTypingGame() {
     });
     setStatus("finished");
   }, [difficulty, timer]);
-
-  // 60s timeout
-  useEffect(() => {
-    if (status !== "playing") return;
-    const id = setTimeout(() => finishGame("timeout"), TIMEOUT_MS);
-    return () => clearTimeout(id);
-  }, [status, finishGame]);
 
   const handleInput = useCallback(
     (value) => {
