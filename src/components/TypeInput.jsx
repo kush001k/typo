@@ -17,8 +17,13 @@ function TypeInput({ value, onChange, hasError, disabled, placeholder }) {
         disabled={disabled}
         placeholder={placeholder || "TYPE HERE..."}
         aria-label="Current word"
+        inputMode="text"
+        autoCapitalize="off"
+        autoCorrect="off"
+        autoComplete="off"
+        spellCheck={false}
           className={`w-full text-2xl md:text-4xl lg:text-5xl font-bold uppercase tracking-tight
-          bg-transparent px-0 py-4 outline-none transition-colors
+          bg-transparent px-0 py-2 min-h-12 outline-none transition-colors
           placeholder:text-muted placeholder:font-normal placeholder:tracking-wider
           ${
             hasError

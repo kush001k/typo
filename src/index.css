@@ -28,11 +28,13 @@ html {
   font-family: var(--font-family-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  height: 100%;
+  overflow: hidden;
 }
 
 body {
-  min-height: 100dvh;
-  overflow-x: hidden;
+  height: 100dvh;
+  overflow: hidden;
 }
 
 ::selection {
@@ -109,5 +111,16 @@ body {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* Compact layout for short screens / landscape with keyboard open */
+@media (orientation: landscape) and (max-height: 500px) {
+  .game-header {
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+  }
+  .game-header .game-stats {
+    font-size: 0.75rem;
   }
 }

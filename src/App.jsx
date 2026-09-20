@@ -1,8 +1,6 @@
-import { useCallback, useEffect } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { useCallback, useEffect, useState } from "react";
+import { motion } from "motion/react";
 import { useTypingGame } from "./hooks/useTypingGame";
-import { useHighScores } from "./hooks/useHighScores";
-import { saveLatestStats } from "./utils/storage";
 import LandingScreen from "./components/LandingScreen";
 import GameScreen from "./components/GameScreen";
 import LoadingScreen from "./components/LoadingScreen";
@@ -10,7 +8,23 @@ import CompletionModal from "./components/CompletionModal";
 
 export default function App() {
   const game = useTypingGame();
-  const { addScore } = useHighScores();
+  // Latest finished-game stats for the marquee. Lives here (not in
+  // StatsMarquee) because LandingScreen unmounts during loading/playing.
+  // Session-only: resets to null (→ 0s) on reload. Latched during render
+  // so it survives lastResult being cleared on dismiss/start.
+  const [marqueeStats, setMarqueeStats] = useState(null);
+  const [prevResult, setPrevResult] = useState(null);
+
+  if (game.lastResult !== prevResult) {
+    setPrevResult(game.lastResult);
+    if (game.lastResult) {
+      setMarqueeStats({
+        wpm: game.lastResult.wpm,
+        accuracy: game.lastResult.accuracy,
+        time: (game.lastResult.time / 1000).toFixed(1),
+      });
+    }
+  }
 
   const handleStart = useCallback(
     (diff) => game.startGame(diff),
@@ -32,7 +46,10 @@ export default function App() {
       if (e.key === "Enter" && game.status === "idle") {
         game.startGame(game.difficulty);
       }
-      if (e.key === "Escape" && game.status === "playing") {
+      if (
+        e.key === "Escape" &&
+        (game.status === "playing" || game.status === "ready")
+      ) {
         game.stopGame();
       }
     };
@@ -40,35 +57,10 @@ export default function App() {
     return () => document.removeEventListener("keydown", handleKey);
   }, [game]);
 
-  // Save score when game finishes
-  useEffect(() => {
-    if (game.status === "finished" && game.lastResult) {
-      const r = game.lastResult;
-      addScore(r.difficulty, {
-        wpm: r.wpm,
-        accuracy: r.accuracy,
-        time: r.time,
-        date: r.date,
-      });
-      saveLatestStats({
-        wpm: r.wpm,
-        accuracy: r.accuracy,
-        wordsTyped: game.wordIndex,
-        time: (r.time / 1000).toFixed(1),
-        difficulty: r.difficulty,
-      });
-    }
-  }, [game.status, game.lastResult, game.wordIndex, addScore]);
+  const stats = marqueeStats;
 
-  const stats =
-    game.lastResult
-      ? {
-          wpm: game.lastResult.wpm,
-          accuracy: game.lastResult.accuracy,
-          time: (game.lastResult.time / 1000).toFixed(1),
-        }
-      : null;
-
+  // One screen at a time: each screen carries a key, so React unmounts the
+  // previous one on the same commit instead of leaving it mounted mid-exit.
   const renderScreen = () => {
     if (game.status === "idle" || game.status === "finished") {
       return (
@@ -76,7 +68,6 @@ export default function App() {
           key="landing"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
         >
           <LandingScreen
@@ -95,7 +86,6 @@ export default function App() {
           key="loading"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
         >
           <LoadingScreen difficulty={game.difficulty} />
@@ -108,7 +98,6 @@ export default function App() {
         key="game"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
         transition={{ duration: 0.3 }}
       >
         <GameScreen
@@ -123,6 +112,8 @@ export default function App() {
           progress={game.progress}
           difficulty={game.difficulty}
           onInput={game.handleInput}
+          onExit={game.stopGame}
+          isArmed={game.status === "ready"}
         />
       </motion.div>
     );
@@ -130,9 +121,7 @@ export default function App() {
 
   return (
     <div className="relative min-h-dvh bg-bg text-fg">
-      <AnimatePresence mode="wait">
-        {renderScreen()}
-      </AnimatePresence>
+      {renderScreen()}
 
       <CompletionModal
         result={game.lastResult}

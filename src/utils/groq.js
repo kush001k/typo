@@ -4,21 +4,18 @@ const MODEL = "openai/gpt-oss-120b";
 const PROMPTS = {
   easy: {
     system:
-      "You are a typing-practice content generator. Generate simple, lowercase-only English sentences for beginner typists. Output strictly as JSON.",
-    user:
-      "Generate 10 simple typing-practice sentences. Each sentence must: be all lowercase, contain NO punctuation, contain NO uppercase letters, use only common everyday vocabulary, and be at most 8 words long. Return a JSON object with a single key 'sentences' containing an array of exactly 10 strings.",
+      "You generate typing-practice sentences. Always output valid JSON only.",
+    user: 'Generate exactly 10 sentences for beginner typists. Rules:\n- All lowercase letters only\n- No punctuation of any kind\n- No uppercase letters\n- Only common, everyday English words\n- Maximum 8 words per sentence\nOutput format: {"sentences": ["sentence 1", "sentence 2", ..., "sentence 10"]}',
   },
   medium: {
     system:
-      "You are a typing-practice content generator. Generate natural English sentences with proper capitalization and simple punctuation for intermediate typists. Output strictly as JSON.",
-    user:
-      "Generate 10 natural English typing-practice sentences. Each sentence must: start with a capital letter, end with a period, allow commas and apostrophes, be at most 15 words long, and read naturally. Return a JSON object with a single key 'sentences' containing an array of exactly 10 strings.",
+      "You generate typing-practice sentences for intermediate typists. Output only valid JSON with a 'sentences' key containing an array of strings.",
+    user: 'Generate exactly 10 natural English sentences for typing practice. Each sentence must: start with a capital letter, end with a period, contain only letters, spaces, commas, and apostrophes, be 1–15 words long, and sound natural. Return a JSON object: { "sentences": [ "...", ... ] }.',
   },
   hard: {
     system:
-      "You are a typing-practice content generator. Generate complex English sentences with rich punctuation for advanced typists. Output strictly as JSON.",
-    user:
-      "Generate 10 complex English typing-practice sentences. Each sentence must: include rich punctuation such as quotes, dashes, semicolons, exclamation marks, or question marks; vary in length up to 30 words; and read naturally. Return a JSON object with a single key 'sentences' containing an array of exactly 10 strings.",
+      "You generate typing-practice sentences. Output ONLY valid JSON with no extra text.",
+    user: 'Generate exactly 10 complex English sentences for advanced typists. Requirements:\n- Each sentence: 10–30 words, natural reading flow.\n- Use rich punctuation in every sentence (quotes, dashes, semicolons, exclamation marks, or question marks).\n- Vary sentence structures and punctuation types across the set.\nReturn a JSON object with one key: "sentences", containing an array of exactly 10 strings.',
   },
 };
 
@@ -41,7 +38,7 @@ const JSON_SCHEMA = {
   },
 };
 
-export async function generateContent(difficulty) {
+export async function generateContent(difficulty, signal) {
   const apiKey = import.meta.env.VITE_GROQ_API_KEY;
   if (!apiKey) {
     throw new Error("VITE_GROQ_API_KEY is not set");
@@ -68,6 +65,7 @@ export async function generateContent(difficulty) {
       max_completion_tokens: 2048,
       response_format: JSON_SCHEMA,
     }),
+    signal,
   });
 
   if (!response.ok) {

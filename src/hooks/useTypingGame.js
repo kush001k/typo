@@ -1,13 +1,13 @@
 import { useState, useCallback, useMemo, useRef, useEffect } from "react";
-import {
-  calculateWpm,
-  calculateAccuracy,
-} from "../utils/scoring";
+import { calculateWpm, calculateAccuracy } from "../utils/scoring";
 import { generateWordSequence } from "../utils/sequencing";
+import { quotes } from "../data/quotes";
 import { useTimer } from "./useTimer";
 import { useGeneratedContent } from "./useGeneratedContent";
 
 const WORD_COUNT = 200;
+const MIN_LOADING_MS = 3000;
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export function useTypingGame() {
   const { refreshLevel } = useGeneratedContent();
@@ -37,7 +37,7 @@ export function useTypingGame() {
 
   const progress = useMemo(
     () => (words.length ? (wordIndex / words.length) * 100 : 0),
-    [wordIndex, words.length]
+    [wordIndex, words.length],
   );
 
   const finishGame = useCallback(
@@ -47,7 +47,7 @@ export function useTypingGame() {
       const finalWpm = calculateWpm(correctCharsRef.current, elapsed);
       const finalAcc = calculateAccuracy(
         correctCharsRef.current,
-        totalTypedRef.current
+        totalTypedRef.current,
       );
       setWpm(finalWpm);
       setAccuracy(finalAcc);
@@ -61,8 +61,15 @@ export function useTypingGame() {
       });
       setStatus("finished");
     },
-    [difficulty, timer]
+    [difficulty, timer],
   );
+
+  // End the game automatically when the timer reaches exactly 999 seconds
+  useEffect(() => {
+    if (timer.elapsed >= 999 * 1000) {
+      finishGame("timeout");
+    }
+  }, [timer.elapsed, finishGame]);
 
   const startGame = useCallback(
     async (diff) => {
@@ -71,7 +78,30 @@ export function useTypingGame() {
       // Enter loading state while the LLM generates content for this level
       setStatus("loading");
       setLastResult(null);
-      const pool = await refreshLevel(d);
+
+      const startTime = Date.now();
+      const controller = new AbortController();
+
+      // Fire the LLM request and the 3s minimum delay together
+      const llmPromise = refreshLevel(d, controller.signal);
+      const minDelay = sleep(MIN_LOADING_MS).then(() => "min-delay");
+
+      const winner = await Promise.race([llmPromise, minDelay]);
+
+      let pool;
+      if (winner === "min-delay") {
+        // 3s elapsed, LLM not ready → deterministic code-based fallback
+        controller.abort();
+        pool = quotes[d] || [];
+      } else {
+        // LLM resolved (or errored→fallback) before 3s
+        pool = winner.sentences;
+        const remaining = MIN_LOADING_MS - (Date.now() - startTime);
+        if (remaining > 0) {
+          await sleep(remaining);
+        }
+      }
+
       const sequence = generateWordSequence(pool, WORD_COUNT);
       wordIndexRef.current = 0;
       setCurrentQuote(sequence);
@@ -83,19 +113,28 @@ export function useTypingGame() {
       setAccuracy(0);
       totalTypedRef.current = 0;
       correctCharsRef.current = 0;
-      timer.start();
-      setStatus("playing");
+      // Armed: the clock starts on the first keystroke (see handleInput)
+      timer.reset();
+      setStatus("ready");
     },
-    [difficulty, timer, refreshLevel]
+    [difficulty, timer, refreshLevel],
   );
 
   const stopGame = useCallback(() => {
-    if (statusRef.current !== "playing") return;
+    const currentStatus = statusRef.current;
+    // Armed but nothing typed yet: exit home without recording a result
+    if (currentStatus === "ready") {
+      setLastResult(null);
+      setStatus("idle");
+      timer.reset();
+      return;
+    }
+    if (currentStatus !== "playing") return;
     const elapsed = timer.stop();
     const finalWpm = calculateWpm(correctCharsRef.current, elapsed);
     const finalAcc = calculateAccuracy(
       correctCharsRef.current,
-      totalTypedRef.current
+      totalTypedRef.current,
     );
     setWpm(finalWpm);
     setAccuracy(finalAcc);
@@ -112,7 +151,16 @@ export function useTypingGame() {
 
   const handleInput = useCallback(
     (value) => {
-      if (statusRef.current !== "playing") return;
+      const currentStatus = statusRef.current;
+      if (currentStatus !== "playing" && currentStatus !== "ready") return;
+
+      // First keystroke starts the clock — exactly once
+      if (currentStatus === "ready") {
+        if (!value) return;
+        statusRef.current = "playing"; // sync guard: prevents a double start
+        timer.start();
+        setStatus("playing");
+      }
 
       setInputValue(value);
       const currentWord = words[wordIndexRef.current];
@@ -123,7 +171,7 @@ export function useTypingGame() {
         const correct = trimmed === currentWord;
         setTypedWords((prev) => [...prev, { word: trimmed, correct }]);
 
-        if (wordIndexRef.current === words.length - 1 && correct) {
+        if (wordIndexRef.current === words.length - 1) {
           finishGame("completed");
         } else {
           wordIndexRef.current += 1;
@@ -145,10 +193,10 @@ export function useTypingGame() {
 
       setWpm(calculateWpm(correctCharsRef.current, timer.elapsed));
       setAccuracy(
-        calculateAccuracy(correctCharsRef.current, totalTypedRef.current)
+        calculateAccuracy(correctCharsRef.current, totalTypedRef.current),
       );
     },
-    [words, timer, finishGame]
+    [words, timer, finishGame],
   );
 
   const dismissGame = useCallback(() => {

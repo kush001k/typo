@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import StatsMarquee from "./StatsMarquee";
+import MetricsMarquee from "./MetricsMarquee";
 import DifficultySelect from "./DifficultySelect";
 
 export default function LandingScreen({
@@ -11,7 +11,7 @@ export default function LandingScreen({
   return (
     <div className="relative flex flex-col min-h-dvh max-h-dvh px-4 sm:px-6 overflow-hidden">
       {/* Stats Marquee at top — pinned */}
-      <StatsMarquee stats={stats} gameStatus={gameStatus} />
+      <MetricsMarquee stats={stats} gameStatus={gameStatus} />
 
       {/* Hero */}
       <div className="flex flex-col items-center justify-center gap-2 sm:gap-4 md:gap-6 mt-10 pt-8">

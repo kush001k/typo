@@ -22,7 +22,7 @@ const dotsContainer = {
 
 export default function LoadingScreen({ difficulty }) {
   return (
-    <div className="h-screen flex flex-col items-center justify-center gap-8">
+    <div className="h-dvh flex flex-col items-center justify-center gap-8">
       <motion.h1
         className="text-5xl md:text-7xl font-bold uppercase tracking-tighter text-white text-center"
         initial={{ opacity: 0, y: 20 }}

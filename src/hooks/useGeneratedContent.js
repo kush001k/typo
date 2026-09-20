@@ -13,7 +13,7 @@ export function useGeneratedContent() {
   );
 
   const refreshLevel = useCallback(
-    async (difficulty) => {
+    async (difficulty, signal) => {
       // Dedupe: if a request for this level is already in-flight, share it
       if (inFlightRef.current[difficulty]) {
         return inFlightRef.current[difficulty];
@@ -22,12 +22,14 @@ export function useGeneratedContent() {
       setLoading((prev) => ({ ...prev, [difficulty]: true }));
       const promise = (async () => {
         try {
-          const sentences = await generateContent(difficulty);
+          const sentences = await generateContent(difficulty, signal);
           setPools((prev) => ({ ...prev, [difficulty]: sentences }));
-          return sentences;
+          return { source: "llm", sentences };
         } catch (err) {
-          console.error(`Groq generation failed for ${difficulty}:`, err.message);
-          return quotes[difficulty] || [];
+          if (err.name !== "AbortError") {
+            console.error(`Groq generation failed for ${difficulty}:`, err.message);
+          }
+          return { source: "fallback", sentences: quotes[difficulty] || [] };
         } finally {
           setLoading((prev) => ({ ...prev, [difficulty]: false }));
           delete inFlightRef.current[difficulty];
