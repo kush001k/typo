@@ -1,5 +1,7 @@
 # TYPO
 
+**Live Demo:** [https://typo.kushnaik364.workers.dev/](https://typo.kushnaik364.workers.dev/)
+
 A kinetic typing speed game built with React 19, Tailwind CSS v4, and Motion. Test your typing skills across three difficulty levels with AI-generated content and real-time WPM and accuracy tracking.
 
 ## Features
